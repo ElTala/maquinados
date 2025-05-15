@@ -1,0 +1,22 @@
+body {
+    margin: 0;
+    background-color: #1e1e1e;
+}
+#viewer-container {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 40px;
+    left: 0;
+}
+#file-input {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    background-color: #ffffff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}

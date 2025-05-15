@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Nuevo proyecto{% endblock %}
+
+{% block content %}
+<section class="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg w-full max-w-md p-8">
+    <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">
+        Nuevo proyecto
+    </h2>
+    <div id="successMsg" class="hidden text-green-800 bg-green-100 px-4 py-2 rounded mb-4 text-center"></div>
+    <form id="projectForm" class="space-y-4 items-center">
+        <div>
+            <label class="block text-sm font-medium text-gray-700" for="proyecto">Proyecto</label>
+            <input id="proyecto" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Proyecto" required />
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700" for="descripcion">Descripcion</label>
+            <input id="descripcion" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Descripcion" />
+        </div>
+        <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white rounded-md">
+            Enviar
+        </button>
+    </form>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+<script>
+const socket = io();
+const form = document.getElementById('projectForm');
+const msg  = document.getElementById('successMsg');
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const proyecto   = document.getElementById('proyecto').value;
+  const descripcion = document.getElementById('descripcion').value;
+  socket.emit('send_form_data', { proyecto, descripcion });
+  form.reset();
+});
+socket.on('receive_form_data', data => {
+  msg.textContent = `Proyecto "${data.proyecto}" agregado con éxito`;
+  msg.classList.remove('hidden');
+  setTimeout(() => msg.classList.add('hidden'), 30000);
+});
+</script>
+{% endblock %}

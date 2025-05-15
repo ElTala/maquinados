@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Dashboard de Proyecto{% endblock %}
+
+{% block content %}
+<section class="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg w-full max-w-2xl p-8 mx-auto">
+  <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Status de maquinados</h2>
+  <div class="space-y-4">
+    {% for p in proyectos %}
+      <details class="bg-gray-100 rounded-lg p-4">
+        <summary class="cursor-pointer font-medium">{{ p.proyecto }}</summary>
+        <ul class="mt-2 list-disc list-inside">
+          {% for m in grouped_maquinados.get(p.proyecto, []) %}
+            <li
+              data-part="{{ m.partnumber }}"
+              data-qty="{{ m.cantidad }}"
+              class="flex flex-wrap items-center gap-1"
+            >
+              <span><strong>Parte:</strong> {{ m.partnumber }}</span>
+              <span>| <strong>Descripción:</strong> {{ m.descripcion }}</span>
+              <span>| <strong>Manufacturer:</strong> {{ m.manofacturador }}</span>
+              <span>| <strong>Empleado:</strong> {{ m.empleado }}</span>
+              <span>| <strong>Cantidad:</strong> <span class="qty">{{ m.cantidad }}</span></span>
+              <span>| <strong>Comentarios:</strong> {{ m.comentarios }}</span>
+              <a href="{{ url_for('static', filename='uploads/pdf/' + m.pdf) }}"
+                 class="ml-auto px-2 py-1 rounded-md {% if m.pdf %}bg-red-600 text-white{% else %}bg-gray-400 text-white pointer-events-none{% endif %}">
+                PDF
+              </a>
+              <a href="{{ url_for('static', filename='uploads/step/' + m.step) }}"
+                 class="px-2 py-1 rounded-md {% if m.step %}bg-blue-600 text-white{% else %}bg-gray-400 text-white pointer-events-none{% endif %}">
+                STEP
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </details>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+<script>
+  const socket = io();
+
+  socket.on('receive_maquinado', d => {
+    const panel = Array.from(document.querySelectorAll('details'))
+      .find(p => p.querySelector('summary').textContent.trim() === d.proyecto);
+    if (!panel) return;
+
+    const ul = panel.querySelector('ul');
+    let li = ul.querySelector(`li[data-part="${d.partnumber}"]`);
+
+if (li) {
+  const nueva = Number(d.cantidad) || 0;
+  li.setAttribute('data-qty', nueva);
+  li.querySelector('.qty').textContent = nueva;
+    } else {
+      li = document.createElement('li');
+      li.className = 'flex flex-wrap items-center gap-1';
+      li.setAttribute('data-part', d.partnumber);
+      li.setAttribute('data-qty', d.cantidad);
+
+      li.innerHTML = `
+        <span><strong>Parte:</strong> ${d.partnumber}</span>
+        <span>| <strong>Descripción:</strong> ${d.descripcion}</span>
+        <span>| <strong>Manufacturer:</strong> ${d.manofacturador}</span>
+        <span>| <strong>Empleado:</strong> ${d.empleado}</span>
+        <span>| <strong>Cantidad:</strong> <span class="qty">${d.cantidad}</span></span>
+        <span>| <strong>Comentarios:</strong> ${d.comentarios}</span>
+        <a ${d.pdf
+            ? `href="/static/uploads/pdf/${d.pdf}" class="ml-auto px-2 py-1 rounded-md bg-red-600 text-white"`
+            : `class="ml-auto px-2 py-1 rounded-md bg-gray-400 text-white pointer-events-none"`}>
+          PDF
+        </a>
+        <a ${d.step
+            ? `href="/static/uploads/step/${d.step}" class="px-2 py-1 rounded-md bg-blue-600 text-white"`
+            : `class="px-2 py-1 rounded-md bg-gray-400 text-white pointer-events-none"`}>
+          STEP
+        </a>
+      `;
+
+      ul.appendChild(li);
+      // 5) Quitamos el aviso si existía
+      ul.querySelector('#aviso')?.remove();
+    }
+
+    // 6) Opcional: desplegar el details al llegar nuevo registro
+    panel.open = true;
+  });
+
+  socket.on('play_sound', () => {
+    new Audio('{{ url_for("static", filename="sonidos/sonido.mp3") }}').play();
+  });
+</script>
+{% endblock %}

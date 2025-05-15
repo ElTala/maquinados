@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}Nuevo Maquinado{% endblock %}
+
+{% block content %}
+<section class="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg w-full max-w-md p-8">
+    <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">
+        Nuevo maquinado
+    </h2>
+    <form id="projectForm" class="space-y-4 items-center">
+        
+        <div class="flex gap-4 pt-2 items-center">
+        <button id="btnPdf"  type="button"
+                class="flex-1 py-2 bg-emerald-600 text-white rounded-md">
+            Subir PDF
+        </button>
+        <button id="btnStep" type="button"
+                class="flex-1 py-2 bg-amber-600 text-white rounded-md">
+            Subir .STEP
+        </button>
+
+        <input id="pdfFile" name="pdfFile"  type="file" accept="application/pdf" class="hidden" required>
+        <input id="stepFile" name="stepFile" type="file" accept=".step,.stp"          class="hidden">
+        </div>
+
+        <span id="pdfStatus"  class="flex items-center text-xs text-gray-500"></span>
+        <span id="stepStatus" class="flex items-center text-xs text-gray-500"></span>
+        <div>
+        <label class="block text-sm font-medium text-gray-700" for="proyecto">Proyecto</label>
+        <select
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+            id="proyecto"
+            name="proyecto"
+            required
+        >
+            <option value="" disabled selected>Seleccione proyecto</option>
+            {% for p in proyectos %}
+            <option value="{{ p.proyecto }}">{{ p.proyecto }}</option>
+            {% endfor %}
+        </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700" for="partnumber">Número de parte</label>
+            <input class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                   id="partnumber" placeholder="Número de parte" required />
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700" for="empleado">Empleado</label>
+            <select class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                    id="empleado" placeholder="Empleado" required>
+                <option value="D.SCHLEMER">Daniel Schlemer</option>
+                <option value="G.GONZALEZ">Gerardo Gonzalez</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700" for="descripcion">Descripción</label>
+            <input class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                   id="descripcion" placeholder="Descripción" required />
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700" for="manofacturador">Manufacturer</label>
+            <input class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                   id="manofacturador" value="DATATECHNIC" placeholder="Manufacturer" required />
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700" for="cantidad">Cantidad</label>
+            <input type="number" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                   id="cantidad" value="1" required />
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700" for="comentarios">Comentarios</label>
+            <input class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                   id="comentarios" placeholder="Comentarios" />
+        </div>
+
+        <button type="submit"
+                class="w-full py-2 px-4 bg-blue-600 text-white rounded-md">
+            Enviar
+        </button>
+    </form>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const socket    = io()
+const stepInput = document.getElementById('stepFile')
+const pdfInput  = document.getElementById('pdfFile')
+let pdfName  = null
+let stepName = null
+socket.on('pdf_data', data => {
+  if (data.dtm)         document.getElementById('partnumber').value = data.dtm
+  if (data.descripcion) document.getElementById('descripcion').value = data.descripcion
+})
+
+document.getElementById('btnStep').onclick = () => stepInput.click()
+document.getElementById('btnPdf').onclick  = () => pdfInput.click()
+socket.on('pdf_received', data => {
+  document.getElementById('pdfStatus').textContent =
+    `PDF cargado: ${data.filename} ✔`;
+  document.getElementById('pdfStatus').classList.replace('text-gray-500','text-green-600');
+});
+
+socket.on('step_received', data => {
+  document.getElementById('stepStatus').textContent =
+    `.STEP cargado: ${data.filename} ✔`;
+  document.getElementById('stepStatus').classList.replace('text-gray-500','text-green-600');
+});
+stepInput.onchange = e => {
+  const file   = e.target.files[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = () => {
+    const arrBuf  = reader.result
+    const base64  = btoa(String.fromCharCode(...new Uint8Array(arrBuf)))
+    socket.emit('upload_step', { filename: file.name, content: base64 })
+  }
+  reader.readAsArrayBuffer(file)
+}
+
+pdfInput.onchange = e => {
+  const file   = e.target.files[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = () => {
+    const arrBuf  = reader.result
+    const base64  = btoa(String.fromCharCode(...new Uint8Array(arrBuf)))
+    socket.emit('upload_pdf', { filename: file.name, content: base64 })
+  }
+  reader.readAsArrayBuffer(file)
+}
+
+  socket.on('pdf_received', d  => { pdfName  = d.filename
+  pdfStatus.textContent = `PDF: ${d.filename}`; pdfStatus.classList.replace('text-gray-500','text-green-600') })
+  socket.on('step_received', d => { stepName = d.filename
+  stepStatus.textContent = `.STEP: ${d.filename}`; stepStatus.classList.replace('text-gray-500','text-green-600') })
+
+projectForm.addEventListener('submit', e => {
+
+  e.preventDefault()
+  socket.emit('new_maquinado', {
+    proyecto      : proyecto.value,
+    empleado      : empleado.value,
+    descripcion   : descripcion.value,
+    manofacturador: manofacturador.value,
+    cantidad      : cantidad.value,
+    comentarios   : comentarios.value,
+    partnumber    : partnumber.value,
+    pdf           : pdfName,
+    step          : stepName
+  })
+  pdfName = stepName = null
+  e.target.reset()
+  window.location.reload();
+})
+</script>
+{% endblock %}

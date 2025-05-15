@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Panel{% endblock %}</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='iconos/icono.png') }}" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+
+    <style>
+        @keyframes slide-in{from{transform:translateY(-25px);opacity:0}to{transform:translateY(0);opacity:1}}
+        .slide-in{animation:slide-in .6s ease-out}
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col bg-fixed bg-cover bg-center"
+      style="background-image:url('{{ url_for('static', filename='imagenes/background.jpg') }}');">
+
+    <header class="w-full bg-blue-900/90 backdrop-blur-sm text-white slide-in ">
+        <div class="mx-auto px-6 py-4 flex items-center justify-between">
+            <div >
+                <img src="{{ url_for('static', filename='/imagenes/data.png') }}" class="h-9 w-auto" alt="Logo">
+            </div>
+            <nav class="hidden lg:flex gap-8 items-start  text-sm">
+                <a href="/" class="hover:text-blue-300">Nuevo Maquinado</a>
+                <a href="/pedidos" class="hover:text-blue-300">Pedidos</a>
+                <a href="/visualizador" class="hover:text-blue-300 bg-center">Visualizador</a>
+                <a href="/nuevoProyecto" class="hover:text-blue-300 bg-center">Agregar proyecto</a>
+            </nav>
+            <span class="text-xs">v0.1</span>
+        </div>
+    </header>
+
+    <aside id="drawer"
+           class="fixed inset-y-0 left-0 w-56 bg-blue-800 text-white transform -translate-x-full transition-transform duration-300 lg:hidden z-40">
+    </aside>
+
+    <main class="flex-1 flex items-start justify-center py-10 px-6 slide-in">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="w-full bg-blue-900/90 backdrop-blur-sm text-white text-center py-6 slide-in">
+        &copy; 2025 Datatechnic • Todos los derechos reservados
+    </footer>
+
+    {% block scripts %}{% endblock %}
+
+    <script>
+        const burger = document.getElementById('burger')
+        const drawer = document.getElementById('drawer')
+        burger?.addEventListener('click', () => {
+            drawer.classList.toggle('-translate-x-full')
+        })
+    </script>
+</body>
+</html>
