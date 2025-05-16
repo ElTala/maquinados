@@ -1,35 +1,59 @@
 [
     {
-        "proyecto": "DTM15052025AP2",
-        "empleado": "D.SCHLEMER",
-        "descripcion": "GUARD A32",
-        "manofacturador": "DATATECHNIC",
-        "cantidad": "21",
-        "comentarios": "Nada",
-        "partnumber": "DTM2407IA2263R1-A32-M4",
-        "pdf": "DTM2407IA2263R1-A32-M4 1.pdf",
-        "step": "DTM2407IA2263R1-A4-M1 1.step"
-    },
-    {
-        "proyecto": "DTM15052025AP2",
-        "empleado": "D.SCHLEMER",
-        "descripcion": "BASE PLATE OP50",
-        "manofacturador": "DATATECHNIC",
-        "cantidad": "2",
-        "comentarios": "Nada",
+        "proyecto": "DTM15052025AP",
+        "pdf": "DTM2502RV357-A0-M1.pdf",
         "partnumber": "DTM2502RV357-A0-M0",
-        "pdf": "DTM2502RV357-A0-M0.pdf",
-        "step": ""
+        "descripcion": "BASE PLATE OP50",
+        "empleado": "D.SCHLEMER",
+        "manofacturador": "",
+        "comentarios": "",
+        "cantidad": 1
     },
     {
         "proyecto": "DTM15052025AP",
-        "empleado": "D.SCHLEMER",
-        "descripcion": "BASE PLATE OP50",
-        "manofacturador": "DATATECHNIC",
-        "cantidad": "1",
-        "comentarios": "Santo dio",
+        "pdf": "DTM2502RV357-A0-M3.pdf",
         "partnumber": "DTM2502RV357-A0-M0",
+        "descripcion": "BASE PLATE OP50",
+        "empleado": "D.SCHLEMER",
+        "manofacturador": "",
+        "comentarios": "",
+        "cantidad": 1
+    },
+    {
+        "proyecto": "DTM15052025AP",
+        "pdf": "DTM2502RV357-A0-M2.pdf",
+        "partnumber": "DTM2502RV357-A0-M0",
+        "descripcion": "BASE PLATE OP50",
+        "empleado": "D.SCHLEMER",
+        "manofacturador": "",
+        "comentarios": "",
+        "cantidad": 1
+    },
+    {
+        "proyecto": "DTM15052025AP3",
         "pdf": "DTM2502RV357-A0-M0.pdf",
-        "step": "DTM2407IA2263R1-A4-M1 1.step"
+        "partnumber": "DTM2502RV357-A0-M0",
+        "descripcion": "BASE PLATE OP50",
+        "empleado": "D.SCHLEMER",
+        "manofacturador": "",
+        "comentarios": ""
+    },
+    {
+        "proyecto": "DTM15052025AP3",
+        "pdf": "DTM2502RV357-A0-M2.pdf",
+        "partnumber": "DTM2502RV357-A0-M0",
+        "descripcion": "BASE PLATE OP50",
+        "empleado": "D.SCHLEMER",
+        "manofacturador": "",
+        "comentarios": ""
+    },
+    {
+        "proyecto": "DTM15052025AP3",
+        "pdf": "DTM2502RV357-A0-M3.pdf",
+        "partnumber": "DTM2502RV357-A0-M0",
+        "descripcion": "BASE PLATE OP50",
+        "empleado": "D.SCHLEMER",
+        "manofacturador": "",
+        "comentarios": ""
     }
 ]

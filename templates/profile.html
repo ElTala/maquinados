@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+{% block title %}Mi perfil{% endblock %}
+{% block content %}
+  <div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+    <h2 class="text-xl mb-4">Mi perfil</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat,msg in messages %}<p class="text-green-600">{{ msg }}</p>{% endfor %}
+    {% endwith %}
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('profile') }}">
+      <label>Usuario</label>
+      <input name="username" value="{{ user.username }}" class="w-full mb-2 border rounded p-1">
+      <label>Email</label>
+      <input name="email" type="email" value="{{ user.email }}" class="w-full mb-2 border rounded p-1">
+      <label>Nueva contraseña (opcional)</label>
+      <input name="password" type="password" class="w-full mb-2 border rounded p-1">
+      <label>Foto de perfil</label>
+      <input name="profile_pic" type="file" class="w-full mb-4">
+      {% if user.profile_pic %}
+        <img src="{{ url_for('archivos', filename=user.profile_pic) }}"
+             class="w-20 h-20 rounded-full mb-4" alt="Avatar">
+      {% endif %}
+      <button class="w-full bg-blue-600 text-white py-2 rounded">Guardar cambios</button>
+    </form>
+  </div>
+{% endblock %}

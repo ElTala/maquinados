@@ -18,19 +18,37 @@
 <body class="min-h-screen flex flex-col bg-fixed bg-cover bg-center"
       style="background-image:url('{{ url_for('static', filename='imagenes/background.jpg') }}');">
 
-    <header class="w-full bg-blue-900/90 backdrop-blur-sm text-white slide-in ">
-        <div class="mx-auto px-6 py-4 flex items-center justify-between">
-            <div >
-                <img src="{{ url_for('static', filename='/imagenes/data.png') }}" class="h-9 w-auto" alt="Logo">
-            </div>
-            <nav class="hidden lg:flex gap-8 items-start  text-sm">
-                <a href="/" class="hover:text-blue-300">Nuevo Maquinado</a>
-                <a href="/pedidos" class="hover:text-blue-300">Pedidos</a>
-                <a href="/visualizador" class="hover:text-blue-300 bg-center">Visualizador</a>
-                <a href="/nuevoProyecto" class="hover:text-blue-300 bg-center">Agregar proyecto</a>
-            </nav>
-            <span class="text-xs">v0.1</span>
+    <header class="w-full bg-blue-900/90 backdrop-blur-sm text-white slide-in">
+    <div class="mx-auto px-2 py-4 flex items-center justify-between">
+        <img src="{{ url_for('static', filename='/imagenes/data.png') }}" class="h-9" alt="Logo">
+
+        <nav class="hidden lg:flex gap-6">
+        <a href="/"             class="px-4 py-2 rounded-md bg-blue-850 hover:bg-blue-900">Nuevo Maquinado</a>
+        <a href="/pedidos"      class="px-4 py-2 rounded-md bg-blue-850 hover:bg-blue-900">Pedidos</a>
+        <a href="/visualizador" class="px-4 py-2 rounded-md bg-blue-850 hover:bg-blue-900">Visualizador</a>
+        <a href="/nuevoProyecto" class="px-4 py-2 rounded-md bg-blue-850 hover:bg-blue-900">Agregar proyecto</a>
+        </nav>
+
+        <div class="flex items-center gap-4">
+        {% if session.get('user_id') %}
+            {% set u = (load_users()|selectattr("id","equalto",session.user_id)|first) %}
+            {% if u.profile_pic %}
+            <img src="{{ url_for('archivos', filename=u.profile_pic) }}"
+                class="w-8 h-8 rounded-full" alt="Avatar">
+            {% else %}
+            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/>
+                <path d="M4 20v-1c0-2.76 5.24-4 8-4s8 1.24 8 4v1H4z"/>
+            </svg>
+            {% endif %}
+            <a href="{{ url_for('profile') }}" class="underline">Mi perfil</a>
+            <a href="{{ url_for('logout') }}" class="px-2 py-1 bg-red-500 rounded">Salir</a>
+        {% else %}
+            <a href="{{ url_for('login') }}" class="px-2 py-1 bg-green-500 rounded">Iniciar sesión</a>
+            <a href="{{ url_for('register') }}" class="px-2 py-1 bg-blue-500 rounded">Registrarse</a>
+        {% endif %}
         </div>
+    </div>
     </header>
 
     <aside id="drawer"

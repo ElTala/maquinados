@@ -1,162 +1,180 @@
 {% extends "base.html" %}
-{% block title %}Nuevo Maquinado{% endblock %}
+{% block title %}Solicitud de maquinados{% endblock %}
 
 {% block content %}
-<section class="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg w-full max-w-md p-8">
-    <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">
-        Nuevo maquinado
-    </h2>
-    <form id="projectForm" class="space-y-4 items-center">
-        
-        <div class="flex gap-4 pt-2 items-center">
-        <button id="btnPdf"  type="button"
-                class="flex-1 py-2 bg-emerald-600 text-white rounded-md">
-            Subir PDF
-        </button>
-        <button id="btnStep" type="button"
-                class="flex-1 py-2 bg-amber-600 text-white rounded-md">
-            Subir .STEP
-        </button>
+<section class="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg w-full max-w-full p-8 mx-auto">
+  <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">
+    Solicitud de maquinados
+  </h2>
 
-        <input id="pdfFile" name="pdfFile"  type="file" accept="application/pdf" class="hidden" required>
-        <input id="stepFile" name="stepFile" type="file" accept=".step,.stp"          class="hidden">
-        </div>
+  <div class="flex flex-wrap gap-4 mb-4 items-end justify-center">
+    <button id="btnPdf" class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700">
+      Subir PDF(s)
+    </button>
+    <input id="pdfFile" type="file" accept="application/pdf" multiple class="hidden" />
 
-        <span id="pdfStatus"  class="flex items-center text-xs text-gray-500"></span>
-        <span id="stepStatus" class="flex items-center text-xs text-gray-500"></span>
-        <div>
-        <label class="block text-sm font-medium text-gray-700" for="proyecto">Proyecto</label>
-        <select
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-            id="proyecto"
-            name="proyecto"
-            required
-        >
-            <option value="" disabled selected>Seleccione proyecto</option>
-            {% for p in proyectos %}
-            <option value="{{ p.proyecto }}">{{ p.proyecto }}</option>
-            {% endfor %}
-        </select>
-        </div>
+    <div class="w-1/5">
+      <label for="proyecto" class="block text-sm font-medium text-gray-700">Proyecto</label>
+      <select id="proyecto" class="mt-1 block w-full px-3 py-2 border rounded-md" required>
+        <option value="" disabled selected>Seleccione proyecto</option>
+        {% for p in proyectos %}
+        <option value="{{ p.proyecto }}">{{ p.proyecto }}</option>
+        {% endfor %}
+      </select>
+    </div>
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700" for="partnumber">Número de parte</label>
-            <input class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                   id="partnumber" placeholder="Número de parte" required />
-        </div>
+    <div class="w-1/5">
+      <label for="empleadoGlobal" class="block text-sm font-medium text-gray-700">Empleado</label>
+      <select id="empleadoGlobal" class="mt-1 block w-full px-3 py-2 border rounded-md">
+        <option value="D.SCHLEMER">Daniel Schlemer</option>
+        <option value="G.GONZALEZ">Gerardo Gonzalez</option>
+      </select>
+    </div>
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700" for="empleado">Empleado</label>
-            <select class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                    id="empleado" placeholder="Empleado" required>
-                <option value="D.SCHLEMER">Daniel Schlemer</option>
-                <option value="G.GONZALEZ">Gerardo Gonzalez</option>
-            </select>
-        </div>
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700" for="descripcion">Descripción</label>
-            <input class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                   id="descripcion" placeholder="Descripción" required />
-        </div>
+  <div class="overflow-x-auto">
+    <table class="w-full table-fixed divide-y divide-gray-200 text-sm">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="w-2/12 px-4 py-2">Archivo</th>
+          <th class="w-1/12 px-4 py-2">Parte</th>
+          <th class="w-2/12 px-4 py-2">Descripción</th>
+          <th class="w-1/12 px-4 py-2">Manufacturer</th>
+          <th class="w-1/12 px-4 py-2">Cantidad</th>
+          <th class="w-2/12 px-4 py-2">Comentarios</th>
+          <th class="w-1/12 px-4 py-2">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="maquinadosBody" class="bg-white divide-y divide-gray-200"></tbody>
+    </table>
+  </div>
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700" for="manofacturador">Manufacturer</label>
-            <input class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                   id="manofacturador" value="DATATECHNIC" placeholder="Manufacturer" required />
-        </div>
-
-        <div>
-            <label class="block text-sm font-medium text-gray-700" for="cantidad">Cantidad</label>
-            <input type="number" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                   id="cantidad" value="1" required />
-        </div>
-
-        <div>
-            <label class="block text-sm font-medium text-gray-700" for="comentarios">Comentarios</label>
-            <input class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                   id="comentarios" placeholder="Comentarios" />
-        </div>
-
-        <button type="submit"
-                class="w-full py-2 px-4 bg-blue-600 text-white rounded-md">
-            Enviar
-        </button>
-    </form>
+  <div class="flex justify-center mt-6">
+    <button id="saveAll" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+      Enviar maquinados
+    </button>
+  </div>
 </section>
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
 <script>
-const socket    = io()
-const stepInput = document.getElementById('stepFile')
-const pdfInput  = document.getElementById('pdfFile')
-let pdfName  = null
-let stepName = null
-socket.on('pdf_data', data => {
-  if (data.dtm)         document.getElementById('partnumber').value = data.dtm
-  if (data.descripcion) document.getElementById('descripcion').value = data.descripcion
-})
+  const socket         = io();
+  const maqs           = [];
+  const pdfInput       = document.getElementById('pdfFile');
+  const btnPdf         = document.getElementById('btnPdf');
+  const proyectoSelect = document.getElementById('proyecto');
+  const empleadoGlobal = document.getElementById('empleadoGlobal');
+  const cantidadGlobal = document.getElementById('cantidadGlobal');
+  const tablaBody      = document.getElementById('maquinadosBody');
+  const btnSave        = document.getElementById('saveAll');
 
-document.getElementById('btnStep').onclick = () => stepInput.click()
-document.getElementById('btnPdf').onclick  = () => pdfInput.click()
-socket.on('pdf_received', data => {
-  document.getElementById('pdfStatus').textContent =
-    `PDF cargado: ${data.filename} ✔`;
-  document.getElementById('pdfStatus').classList.replace('text-gray-500','text-green-600');
-});
+  btnPdf.onclick = () => pdfInput.click();
 
-socket.on('step_received', data => {
-  document.getElementById('stepStatus').textContent =
-    `.STEP cargado: ${data.filename} ✔`;
-  document.getElementById('stepStatus').classList.replace('text-gray-500','text-green-600');
-});
-stepInput.onchange = e => {
-  const file   = e.target.files[0]
-  if (!file) return
-  const reader = new FileReader()
-  reader.onload = () => {
-    const arrBuf  = reader.result
-    const base64  = btoa(String.fromCharCode(...new Uint8Array(arrBuf)))
-    socket.emit('upload_step', { filename: file.name, content: base64 })
+  pdfInput.onchange = e => {
+    Array.from(e.target.files).forEach(file => {
+      const id = crypto.randomUUID();
+      const reader = new FileReader();
+      reader.onload = () => {
+        socket.emit('upload_pdf', {
+          filename: file.name,
+          content: btoa(new Uint8Array(reader.result)
+            .reduce((s, byte) => s + String.fromCharCode(byte), '')),
+          id
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    });
+    e.target.value = null;
+  };
+
+  socket.on('pdf_data', data => {
+    maqs.push({
+      id: data.id,
+      filename: data.filename,
+      dtm: data.dtm,
+      descripcion: data.descripcion,
+      manofacturador: '',
+      comentarios: '',
+      empleado: empleadoGlobal.value,
+    });
+    renderTable();
+  });
+
+  empleadoGlobal.onchange = () => {
+    maqs.forEach(m => m.empleado = empleadoGlobal.value);
+    renderTable();
+  };
+
+  function renderTable() {
+    tablaBody.innerHTML = '';
+    maqs.forEach(m => {
+      tablaBody.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td class="px-4 py-2 overflow-hidden">${m.filename}</td>
+          <td class="px-4 py-2">
+            <input data-id="${m.id}" data-field="dtm" value="${m.dtm}"
+                   class="w-full border rounded px-2 py-1 text-sm" />
+          </td>
+          <td class="px-4 py-2">
+            <input data-id="${m.id}" data-field="descripcion" value="${m.descripcion}"
+                   class="w-full border rounded px-2 py-1 text-sm" />
+          </td>
+          <td class="px-4 py-2">
+            <input data-id="${m.id}" data-field="manofacturador" value="${m.manofacturador}"
+                   class="w-full border rounded px-2 py-1 text-sm" />
+          </td>
+          <td class="px-4 py-2">
+            <input data-id="${m.id}" data-field="comentarios" value="${m.comentarios}"
+                   class="w-full border rounded px-2 py-1 text-sm" />
+          </td>
+          <td class="px-4 py-2">
+            <button data-id="${m.id}" class="delete-btn text-red-600 hover:underline text-sm">
+              Eliminar
+            </button>
+          </td>
+        </tr>`
+      );
+    });
   }
-  reader.readAsArrayBuffer(file)
-}
 
-pdfInput.onchange = e => {
-  const file   = e.target.files[0]
-  if (!file) return
-  const reader = new FileReader()
-  reader.onload = () => {
-    const arrBuf  = reader.result
-    const base64  = btoa(String.fromCharCode(...new Uint8Array(arrBuf)))
-    socket.emit('upload_pdf', { filename: file.name, content: base64 })
-  }
-  reader.readAsArrayBuffer(file)
-}
+  tablaBody.addEventListener('change', e => {
+    const { id, field } = e.target.dataset;
+    const m = maqs.find(x => x.id === id);
+    if (m && field) {
+      m[field] = field === 'cantidad'
+        ? parseInt(e.target.value, 10)
+        : e.target.value;
+    }
+  });
 
-  socket.on('pdf_received', d  => { pdfName  = d.filename
-  pdfStatus.textContent = `PDF: ${d.filename}`; pdfStatus.classList.replace('text-gray-500','text-green-600') })
-  socket.on('step_received', d => { stepName = d.filename
-  stepStatus.textContent = `.STEP: ${d.filename}`; stepStatus.classList.replace('text-gray-500','text-green-600') })
+  tablaBody.addEventListener('click', e => {
+    if (!e.target.matches('.delete-btn')) return;
+    const id  = e.target.dataset.id;
+    const idx = maqs.findIndex(x => x.id === id);
+    if (idx > -1) maqs.splice(idx, 1);
+    renderTable();
+  });
 
-projectForm.addEventListener('submit', e => {
-
-  e.preventDefault()
-  socket.emit('new_maquinado', {
-    proyecto      : proyecto.value,
-    empleado      : empleado.value,
-    descripcion   : descripcion.value,
-    manofacturador: manofacturador.value,
-    cantidad      : cantidad.value,
-    comentarios   : comentarios.value,
-    partnumber    : partnumber.value,
-    pdf           : pdfName,
-    step          : stepName
-  })
-  pdfName = stepName = null
-  e.target.reset()
-  window.location.reload();
-})
+  btnSave.onclick = () => {
+    if (!proyectoSelect.value) {
+      return alert('Selecciona un proyecto antes de guardar.');
+    }
+    maqs.forEach(m => {
+      socket.emit('new_maquinado', {
+        proyecto: proyectoSelect.value,
+        pdf: m.filename,
+        partnumber: m.dtm,
+        descripcion: m.descripcion,
+        empleado: m.empleado,
+        manofacturador: m.manofacturador,
+        comentarios: m.comentarios,
+      });
+    });
+    maqs.length = 0;
+    renderTable();
+    alert('¡Maquinados enviados!');
+  };
 </script>
 {% endblock %}
