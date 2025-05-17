@@ -2,8 +2,15 @@
     {
         "id": 1,
         "username": "José Andrés Pérez Talamantes",
-        "email": "eltalasnk@gmail.com",
+        "email": "andres.perez@datatechnic.com.mx",
         "password": "gAAAAABoJ9W3MQiUvvZ7U-RGnzsnDCwSXjzDhH93Q4GQsZNTzr2QEmJSfZPspkSDeHyiKbLZluiDhN4At5CVwuoySLqC_IkGFQ==",
         "profile_pic": "user_1_426ea2279941472696d681c1f08ef799.png"
+    },
+    {
+        "id": 2,
+        "username": "Daniel Schlemer",
+        "email": "daniel.schlemer@datatechnic.com.mx",
+        "password": "gAAAAABoJ9av6yZu_iRc0gxXifKZOJsYdMw9FJ8TQ3D6dhP0bEqdZklmK24qVHDX5TCjaW31pW-K4Ka25-S3nosmlJlPty5iXg==",
+        "profile_pic": "user_2_54ed62872073493299edb4470a540248.webp"
     }
 ]
