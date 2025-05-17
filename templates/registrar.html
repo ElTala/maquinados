@@ -6,7 +6,7 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% for cat,msg in messages %}<p class="text-red-600">{{ msg }}</p>{% endfor %}
     {% endwith %}
-    <form method="post" action="{{ url_for('register') }}">
+    <form method="post" action="{{ url_for('registrar') }}">
       <label>Nombre de usuario</label><input name="username" required class="w-full mb-2 border rounded p-1">
       <label>Email</label><input name="email" type="email" required class="w-full mb-2 border rounded p-1">
       <label>Contraseña</label><input name="password" type="password" required class="w-full mb-2 border rounded p-1">

@@ -32,7 +32,7 @@
                     {% if u %}
                         <strong>{{ u.username }}</strong>
                     {% endif %}
-                    <a href="{{ url_for('profile') }}">
+                    <a href="{{ url_for('perfil') }}">
                         {% if u and u.profile_pic %}
                             <img src="{{ url_for('archivos', filename=u.profile_pic) }}" class="w-12 h-12 rounded-full cursor-pointer bg-blue-500" alt="Avatar">
                         {% else %}
@@ -46,7 +46,7 @@
                     <a href="{{ url_for('logout') }}" class="px-2 py-1 bg-red-500 rounded">Salir</a>
                 {% else %}
                     <a href="{{ url_for('login') }}" class="px-2 py-1 bg-green-500 rounded">Iniciar sesión</a>
-                    <a href="{{ url_for('register') }}" class="px-2 py-1 bg-blue-500 rounded">Registrarse</a>
+                    <a href="{{ url_for('registrar') }}" class="px-2 py-1 bg-blue-500 rounded">Registrarse</a>
                 {% endif %}
             </div>
         </div>

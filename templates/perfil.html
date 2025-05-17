@@ -6,7 +6,7 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% for cat,msg in messages %}<p class="text-green-600">{{ msg }}</p>{% endfor %}
     {% endwith %}
-    <form method="post" enctype="multipart/form-data" action="{{ url_for('profile') }}">
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('perfil') }}">
       <label>Usuario</label>
       <input name="username" value="{{ user.username }}" class="w-full mb-2 border rounded p-1">
       <label>Email</label>

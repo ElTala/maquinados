@@ -104,8 +104,8 @@ def handle_new_maquinado(data):
         json.dump(maqs, f, ensure_ascii=False, indent=4)
     emit('receive_maquinado', data, broadcast=True)
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
+@app.route('/registrar', methods=['GET', 'POST'])
+def registrar():
     if request.method == 'POST':
         username = request.form['username'].strip()
         email = request.form['email'].strip().lower()
@@ -113,11 +113,11 @@ def register():
         pwd2 = request.form['password2']
         if pwd != pwd2:
             flash('Las contraseñas no coinciden', 'error')
-            return redirect(url_for('register'))
+            return redirect(url_for('registrar'))
         users = load_users()
         if any(u['email'] == email for u in users):
             flash('Ese correo ya está registrado', 'error')
-            return redirect(url_for('register'))
+            return redirect(url_for('registrar'))
         next_id = max([u['id'] for u in users], default=0) + 1
         users.append({
             'id': next_id,
@@ -129,7 +129,7 @@ def register():
         save_users(users)
         session['user_id'] = next_id
         return redirect(url_for('index'))
-    return render_template('register.html')
+    return render_template('registrar.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -145,8 +145,8 @@ def login():
         return redirect(url_for('index'))
     return render_template('login.html')
 
-@app.route('/forgot-password', methods=['GET', 'POST'])
-def forgot_password():
+@app.route('/recuperar', methods=['GET', 'POST'])
+def olvido():
     recovered = None
     if request.method == 'POST':
         email = request.form['email'].strip().lower()
@@ -156,10 +156,10 @@ def forgot_password():
             recovered = decrypt_pwd(user['password'])
         else:
             flash('Correo no registrado', 'error')
-    return render_template('forgot_password.html', recovered=recovered)
+    return render_template('olvido.html', recovered=recovered)
 
-@app.route('/profile', methods=['GET', 'POST'])
-def profile():
+@app.route('/perfil', methods=['GET', 'POST'])
+def perfil():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     users = load_users()
@@ -180,8 +180,8 @@ def profile():
             user['profile_pic'] = fn
         save_users(users)
         flash('Perfil actualizado', 'success')
-        return redirect(url_for('profile'))
-    return render_template('profile.html', user=user)
+        return redirect(url_for('perfil'))
+    return render_template('perfil.html', user=user)
 
 @app.route('/logout')
 def logout():
