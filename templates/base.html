@@ -1,76 +1,73 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Panel{% endblock %}</title>
-
-    <link rel="icon" href="{{ url_for('static', filename='iconos/icono.png') }}" />
+    <link rel="icon" href="{{ url_for('static', filename='iconos/icono.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
-
     <style>
         @keyframes slide-in{from{transform:translateY(-25px);opacity:0}to{transform:translateY(0);opacity:1}}
         .slide-in{animation:slide-in .6s ease-out}
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col bg-fixed bg-cover bg-center"
-      style="background-image:url('{{ url_for('static', filename='imagenes/background.jpg') }}');">
-
+<body class="min-h-screen flex flex-col bg-fixed bg-cover bg-center" style="background-image:url('{{ url_for('static', filename='imagenes/background.jpg') }}');">
     <header class="w-full bg-blue-900/90 backdrop-blur-sm text-white slide-in">
-    <div class="mx-auto px-2 py-4 flex items-center justify-between">
-        <img src="{{ url_for('static', filename='/imagenes/data.png') }}" class="h-9" alt="Logo">
+        <br>
+        <img src="{{ url_for('static', filename='/imagenes/data.png') }}" class="mx-auto h-9" alt="Logo">
 
-        <nav class="hidden lg:flex gap-6">
-        <a href="/"             class="px-4 py-2 rounded-md bg-blue-850 hover:bg-blue-900">Nuevo Maquinado</a>
-        <a href="/pedidos"      class="px-4 py-2 rounded-md bg-blue-850 hover:bg-blue-900">Pedidos</a>
-        <a href="/visualizador" class="px-4 py-2 rounded-md bg-blue-850 hover:bg-blue-900">Visualizador</a>
-        <a href="/nuevoProyecto" class="px-4 py-2 rounded-md bg-blue-850 hover:bg-blue-900">Agregar proyecto</a>
-        </nav>
+        <div class="flex items-center px-4 py-4">
+            <div class="flex-1 flex justify-center">
+                <nav class="hidden lg:flex gap-1 absolute left-1/2 -translate-x-1/2">
+                    <strong><a href="/"              class="px-4 py-2 rounded-md bg-blue-900 hover:bg-blue-800">Nueva Solicitud</a></strong>
+                    <strong><a href="/pedidos"       class="px-4 py-2 rounded-md bg-blue-900 hover:bg-blue-800">Seguimiento</a></strong>
+                    <strong><a href="/nuevoProyecto" class="px-4 py-2 rounded-md bg-blue-900 hover:bg-blue-800">Agregar proyecto</a></strong>
+                </nav>
+            </div>
 
-        <div class="flex items-center gap-4">
-        {% if session.get('user_id') %}
-            {% set u = (load_users()|selectattr("id","equalto",session.user_id)|first) %}
-            {% if u.profile_pic %}
-            <img src="{{ url_for('archivos', filename=u.profile_pic) }}"
-                class="w-8 h-8 rounded-full" alt="Avatar">
-            {% else %}
-            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/>
-                <path d="M4 20v-1c0-2.76 5.24-4 8-4s8 1.24 8 4v1H4z"/>
-            </svg>
-            {% endif %}
-            <a href="{{ url_for('profile') }}" class="underline">Mi perfil</a>
-            <a href="{{ url_for('logout') }}" class="px-2 py-1 bg-red-500 rounded">Salir</a>
-        {% else %}
-            <a href="{{ url_for('login') }}" class="px-2 py-1 bg-green-500 rounded">Iniciar sesión</a>
-            <a href="{{ url_for('register') }}" class="px-2 py-1 bg-blue-500 rounded">Registrarse</a>
-        {% endif %}
+            <div class="flex items-center gap-2">
+                {% if session.get('user_id') %}
+                    {% if u %}
+                        <strong>{{ u.username }}</strong>
+                    {% endif %}
+                    <a href="{{ url_for('profile') }}">
+                        {% if u and u.profile_pic %}
+                            <img src="{{ url_for('archivos', filename=u.profile_pic) }}" class="w-12 h-12 rounded-full cursor-pointer bg-blue-500" alt="Avatar">
+                        {% else %}
+                            <svg class="w-8 h-8 text-white cursor-pointer" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/>
+                                <path d="M4 20v-1c0-2.76 5.24-4 8-4s8 1.24 8 4v1H4z"/>
+                            </svg>
+                        {% endif %}
+                    </a>
+                    <br><br>
+                    <a href="{{ url_for('logout') }}" class="px-2 py-1 bg-red-500 rounded">Salir</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="px-2 py-1 bg-green-500 rounded">Iniciar sesión</a>
+                    <a href="{{ url_for('register') }}" class="px-2 py-1 bg-blue-500 rounded">Registrarse</a>
+                {% endif %}
+            </div>
         </div>
-    </div>
     </header>
 
-    <aside id="drawer"
-           class="fixed inset-y-0 left-0 w-56 bg-blue-800 text-white transform -translate-x-full transition-transform duration-300 lg:hidden z-40">
-    </aside>
+    <aside id="drawer" class="fixed inset-y-0 left-0 w-56 bg-blue-800 text-white transform -translate-x-full transition-transform duration-300 lg:hidden z-40"></aside>
 
     <main class="flex-1 flex items-start justify-center py-10 px-6 slide-in">
         {% block content %}{% endblock %}
     </main>
 
     <footer class="w-full bg-blue-900/90 backdrop-blur-sm text-white text-center py-6 slide-in">
-        &copy; 2025 Datatechnic • Todos los derechos reservados
+        &copy; 2025 Datatechnic
     </footer>
 
     {% block scripts %}{% endblock %}
 
     <script>
-        const burger = document.getElementById('burger')
-        const drawer = document.getElementById('drawer')
-        burger?.addEventListener('click', () => {
-            drawer.classList.toggle('-translate-x-full')
-        })
+        const burger=document.getElementById('burger')
+        const drawer=document.getElementById('drawer')
+        burger?.addEventListener('click',()=>{drawer.classList.toggle('-translate-x-full')})
     </script>
 </body>
 </html>
